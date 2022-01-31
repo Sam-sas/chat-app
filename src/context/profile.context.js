@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth, database } from "../firebase";
+import { auth, database } from "../misc/firebase";
 
 const ProfileContext = createContext();
 
@@ -16,14 +16,15 @@ export const ProfileProvider = ({ children }) => {
             if (authObj) {
                 //.on is a realtime listener, also need to unsub from database
                 userRef = database.ref(`/profiles/${authObj.uid}`);
+                //callback fired everytime theres a change in the db -- works on any field
                 userRef.on('value', (snapshot) =>{
-                    const { name, createdAt } = snapshot.val();
+                    const { name, createdAt, avatar } = snapshot.val();
                     const data = {
                         name,
                         createdAt,
+                        avatar,
                         uid: authObj.uid,
                         email: authObj.email,
-    
                     }
                     setProfile(data);
                     setLoading(false);
